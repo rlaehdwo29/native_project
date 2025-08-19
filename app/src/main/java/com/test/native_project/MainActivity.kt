@@ -15,6 +15,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.annotation.OptIn
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
@@ -66,16 +67,21 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SpaceDashboard
+import androidx.compose.material.icons.outlined.Chat
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.RemoveRedEye
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.SpaceDashboard
+import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
@@ -89,7 +95,10 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -115,6 +124,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -123,6 +133,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.android.gms.common.internal.service.Common
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
@@ -130,50 +141,176 @@ import com.google.mlkit.vision.face.FaceDetectorOptions
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import androidx.compose.ui.tooling.preview.Preview as comPreView
+import com.test.native_project.comm.Common as comm
+
+data class CardItem(val id: Int, val name : String,  val phoneNum : String, val telNum:String,  val email : String, val company: String, val comDept: String, val comRank:String, val comAddr: String, val comAddrDetail:String, val comPost: String, val bizNum: String, val bizLogo: Int)
+data class BoardItem(val boardId: Int, val title: String, val content: String, val caregory: String, val regId: String, val regDate: String, val view: Int, val like: Int, val replyCnt: Int)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val vm : HomeViewModel by viewModels()
+        vm.addAllItems(
+            listOf(
+                CardItem(
+                    0,
+                    "김홍자",
+                    "010-3867-4453",
+                    "02-418-7864",
+                    "hongja1134@gmail.com",
+                    "(주)하나식품",
+                    "영업2팀",
+                    "주임",
+                    "서울특별시 강서구 공항대로 200",
+                    "하나빌리지 302호",
+                    "07631",
+                    "0423842168",
+                    R.drawable.img_hana_logo
+                ),
+                CardItem(
+                    1,
+                    "박철수",
+                    "010-4120-0345",
+                    "070-4843-1624",
+                    "park.c.s@naver.com",
+                    "(주)롯데정보통신",
+                    "개발3팀",
+                    "파트장",
+                    "서울특별시 금천구 가산디지털2로 179",
+                    "롯데Gos타워 701호",
+                    "07981",
+                    "1435451987",
+                    R.drawable.img_lotte_logo
+                ),
+                CardItem(
+                    2,
+                    "김동재",
+                    "010-1111-2222",
+                    "02-348-4547",
+                    "dongjae.kim@hansol.com",
+                    "(주)한솔로지스유",
+                    "카고링크 사업팀",
+                    "책임",
+                    "서울특별시 강서구 마곡중앙4로 22",
+                    "파인스퀘어 B동 7층",
+                    "07631",
+                    "1537462492",
+                    R.drawable.img_hansol_logo
+                ),
+                CardItem(
+                    3,
+                    "김동재",
+                    "010-1111-2222",
+                    "02-348-4547",
+                    "dongjae.kim@hansol.com",
+                    "(주)한솔로지스유",
+                    "카고링크 사업팀",
+                    "책임",
+                    "서울특별시 강서구 마곡중앙4로 22",
+                    "파인스퀘어 B동 7층",
+                    "07631",
+                    "1537462492",
+                    R.drawable.img_hansol_logo
+                ),
+                CardItem(
+                    4,
+                    "김동재",
+                    "010-1111-2222",
+                    "02-348-4547",
+                    "dongjae.kim@hansol.com",
+                    "(주)한솔로지스유",
+                    "카고링크 사업팀",
+                    "책임",
+                    "서울특별시 강서구 마곡중앙4로 22",
+                    "파인스퀘어 B동 7층",
+                    "07631",
+                    "1537462492",
+                    R.drawable.img_hansol_logo
+                ),
+                CardItem(
+                    5,
+                    "김동재",
+                    "010-1111-2222",
+                    "02-348-4547",
+                    "dongjae.kim@hansol.com",
+                    "(주)한솔로지스유",
+                    "카고링크 사업팀",
+                    "책임",
+                    "서울특별시 강서구 마곡중앙4로 22",
+                    "파인스퀘어 B동 7층",
+                    "07631",
+                    "1537462492",
+                    R.drawable.img_hansol_logo
+                ),
+                CardItem(
+                    6,
+                    "김동재",
+                    "010-1111-2222",
+                    "02-348-4547",
+                    "dongjae.kim@hansol.com",
+                    "(주)한솔로지스유",
+                    "카고링크 사업팀",
+                    "책임",
+                    "서울특별시 강서구 마곡중앙4로 22",
+                    "파인스퀘어 B동 7층",
+                    "07631",
+                    "1537462492",
+                    R.drawable.img_hansol_logo
+                )
+            ))
+        // setContent = Composable UI 시작 지점.
         setContent {
-            MyApp {
-                HomeScreen()
+            val navController = rememberNavController()
+            MaterialTheme {
+                Scaffold (
+                    modifier = Modifier
+                        .padding(WindowInsets.statusBars.asPaddingValues())
+                        .padding(WindowInsets.navigationBars.asPaddingValues())
+                        .fillMaxSize(),
+                    topBar = { appBar() },
+                    bottomBar = {bottomNavigationBar(navController)},
+                    floatingActionButton = { floatingActionButton() },
+                    floatingActionButtonPosition = FabPosition.Center,
+                    isFloatingActionButtonDocked = true
+                ) { innerPadding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = "home",
+                        modifier = Modifier.padding(innerPadding)
+                    ) {
+                        composable("home") { HomeScreen(vm) }
+                        composable("community") { CommunityScreen() }
+                        composable("profile") { ProfileScreen() }
+                        composable("settings") { SettingsScreen() }
+                    }
+                }
             }
         }
     }
 }
 
-data class Item(val id: Int, val name : String,  val phoneNum : String, val telNum:String,  val email : String, val company: String, val comDept: String, val comRank:String, val comAddr: String, val comAddrDetail:String, val comPost: String, val bizNum: String, val bizLogo: Int)
+class HomeViewModel: ViewModel() {
 
-@comPreView
-@Composable
-fun MyApp(content: @Composable () -> Unit) {
-    val navController = rememberNavController()
-    MaterialTheme {
-        Scaffold (
-            modifier = Modifier
-                .padding(WindowInsets.statusBars.asPaddingValues())
-                .padding(WindowInsets.navigationBars.asPaddingValues())
-                .fillMaxSize(),
-            topBar = { appBar() },
-            bottomBar = {bottomNavigationBar(navController)},
-            floatingActionButton = { floatingActionButton() },
-            floatingActionButtonPosition = FabPosition.Center,
-            isFloatingActionButtonDocked = true
-        ) { innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = "home",
-                modifier = Modifier.padding(innerPadding)
-            ) {
-                composable("home") { HomeScreen() }
-                composable("community") { CommunityScreen() }
-                composable("profile") { ProfileScreen() }
-                composable("settings") { SettingsScreen() }
-            }
-        }
+    private var cardList = mutableStateListOf<CardItem>()
+
+    fun addAllItems(items: List<CardItem>) {
+        cardList.addAll(items)
+    }
+
+    fun addItem(item: CardItem) {
+        cardList.add(item)
+    }
+
+    fun removeItem(item: CardItem) {
+        cardList.remove(item)
+    }
+
+    fun getItems() : List<CardItem> {
+        return cardList
     }
 }
 
+    @comPreView(showBackground = true)
     @Composable
     fun appBar() {
         val typography = MaterialTheme.typography
@@ -204,72 +341,75 @@ fun MyApp(content: @Composable () -> Unit) {
         )
     }
 
-@Composable
-fun SearchableTopBar(
-    modifier: Modifier = Modifier,          // 수정자
-    searchMode: Boolean,                    // 검색 모드 ON/OFF 상태 확인
-    searchText: String,                     // 검색창 텍스트
-    onSearchTextChanged: (String) -> Unit,  // 검색창 테스트가 바뀔때 호출
-){
-            TopAppBar(
-                modifier = modifier,
-                backgroundColor = Color.Black
-            ) {
-                AnimatedVisibility(
-                    modifier = Modifier.weight(1f),
-                    visible = true,
-                    enter = scaleIn() + expandHorizontally(),
-                    exit = scaleOut() + shrinkHorizontally()
+    @comPreView(showBackground = true)
+    @Composable
+    fun SearchableTopBar(
+        modifier: Modifier = Modifier,          // 수정자
+        searchMode: Boolean,                    // 검색 모드 ON/OFF 상태 확인
+        searchText: String,                     // 검색창 텍스트
+        onSearchTextChanged: (String) -> Unit,  // 검색창 테스트가 바뀔때 호출
+    ){
+                TopAppBar(
+                    modifier = modifier,
+                    backgroundColor = Color.Black
                 ) {
-                    BasicTextField(
-                        modifier = Modifier
-                            .background(
-                                Color.White,
-                                RoundedCornerShape(3.dp)
-                            )
-                            .padding(top = 5.dp, bottom = 5.dp)
-                            .height(36.dp),
-                        value = searchText,
-                        onValueChange = onSearchTextChanged,
-                        singleLine = true,
-                        cursorBrush = SolidColor(MaterialTheme.colors.primary),
-                        textStyle = LocalTextStyle.current.copy(
-                            color = MaterialTheme.colors.onSurface,
-                            fontSize = MaterialTheme.typography.body2.fontSize
-                        ),
-                        decorationBox = { innerTextField ->
-                            Row(
-                                modifier,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Box(Modifier.weight(1f)) {
-                                    if (searchText.isEmpty()) Text(
-                                        text = "성명 또는 회사명을 입력해주세요.",
-                                        style = LocalTextStyle.current.copy(
-                                            color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
-                                            fontSize = MaterialTheme.typography.body2.fontSize
+                    AnimatedVisibility(
+                        modifier = Modifier.weight(1f),
+                        visible = true,
+                        enter = scaleIn() + expandHorizontally(),
+                        exit = scaleOut() + shrinkHorizontally()
+                    ) {
+                        BasicTextField(
+                            modifier = Modifier
+                                .background(
+                                    Color.White,
+                                    RoundedCornerShape(3.dp)
+                                )
+                                .padding(top = 5.dp, bottom = 5.dp)
+                                .height(36.dp),
+                            value = searchText,
+                            onValueChange = onSearchTextChanged,
+                            singleLine = true,
+                            cursorBrush = SolidColor(MaterialTheme.colors.primary),
+                            textStyle = LocalTextStyle.current.copy(
+                                color = MaterialTheme.colors.onSurface,
+                                fontSize = MaterialTheme.typography.body2.fontSize
+                            ),
+                            decorationBox = { innerTextField ->
+                                Row(
+                                    modifier,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Box(Modifier.weight(1f)) {
+                                        if (searchText.isEmpty()) Text(
+                                            text = "성명 또는 회사명을 입력해주세요.",
+                                            style = LocalTextStyle.current.copy(
+                                                color = MaterialTheme.colors.onSurface.copy(alpha = 0.3f),
+                                                fontSize = MaterialTheme.typography.body2.fontSize
+                                            )
                                         )
-                                    )
-                                    innerTextField()
-                                }
-                                IconButton(onClick = {}) {
-                                    Icon(
-                                        imageVector = Icons.Default.Search,
-                                        contentDescription = "Search Icon",
-                                        tint = LocalContentColor.current.copy(alpha = 0.5f)
-                                    )
+                                        innerTextField()
+                                    }
+                                    IconButton(onClick = {}) {
+                                        Icon(
+                                            imageVector = Icons.Default.Search,
+                                            contentDescription = "Search Icon",
+                                            tint = LocalContentColor.current.copy(alpha = 0.5f)
+                                        )
+                                    }
                                 }
                             }
-                        }
-                    )
-                }
+                        )
+                    }
+        }
     }
-}
 
+    @comPreView(showBackground = true)
     @Composable
-    fun HomeScreen() {
+    fun HomeScreen(vm: HomeViewModel) {
         var searchMode by remember { mutableStateOf(false) }
         var searchText by remember { mutableStateOf("") }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -288,145 +428,145 @@ fun SearchableTopBar(
                 searchText = searchText,
                 onSearchTextChanged = {searchText = it},
             )
-            val sampleItems = listOf(
-                Item(
-                    0,
-                    "김홍자",
-                    "010-3867-4453",
-                    "02-418-7864",
-                    "hongja1134@gmail.com",
-                    "(주)하나식품",
-                    "영업2팀",
-                    "주임",
-                    "서울특별시 강서구 공항대로 200",
-                    "하나빌리지 302호",
-                    "07631",
-                    "0423842168",
-                    R.drawable.img_hana_logo
-                ),
-                Item(
-                    1,
-                    "박철수",
-                    "010-4120-0345",
-                    "070-4843-1624",
-                    "park.c.s@naver.com",
-                    "(주)롯데정보통신",
-                    "개발3팀",
-                    "파트장",
-                    "서울특별시 금천구 가산디지털2로 179",
-                    "롯데Gos타워 701호",
-                    "07981",
-                    "1435451987",
-                    R.drawable.img_lotte_logo
-                ),
-                Item(
-                    2,
-                    "김동재",
-                    "010-1111-2222",
-                    "02-348-4547",
-                    "dongjae.kim@hansol.com",
-                    "(주)한솔로지스유",
-                    "카고링크 사업팀",
-                    "책임",
-                    "서울특별시 강서구 마곡중앙4로 22",
-                    "파인스퀘어 B동 7층",
-                    "07631",
-                    "1537462492",
-                    R.drawable.img_hansol_logo
-                ),
-                Item(
-                    3,
-                    "김동재",
-                    "010-1111-2222",
-                    "02-348-4547",
-                    "dongjae.kim@hansol.com",
-                    "(주)한솔로지스유",
-                    "카고링크 사업팀",
-                    "책임",
-                    "서울특별시 강서구 마곡중앙4로 22",
-                    "파인스퀘어 B동 7층",
-                    "07631",
-                    "1537462492",
-                    R.drawable.img_hansol_logo
-                ),
-                Item(
-                    4,
-                    "김동재",
-                    "010-1111-2222",
-                    "02-348-4547",
-                    "dongjae.kim@hansol.com",
-                    "(주)한솔로지스유",
-                    "카고링크 사업팀",
-                    "책임",
-                    "서울특별시 강서구 마곡중앙4로 22",
-                    "파인스퀘어 B동 7층",
-                    "07631",
-                    "1537462492",
-                    R.drawable.img_hansol_logo
-                ),
-                Item(
-                    5,
-                    "김동재",
-                    "010-1111-2222",
-                    "02-348-4547",
-                    "dongjae.kim@hansol.com",
-                    "(주)한솔로지스유",
-                    "카고링크 사업팀",
-                    "책임",
-                    "서울특별시 강서구 마곡중앙4로 22",
-                    "파인스퀘어 B동 7층",
-                    "07631",
-                    "1537462492",
-                    R.drawable.img_hansol_logo
-                ),
-                Item(
-                    6,
-                    "김동재",
-                    "010-1111-2222",
-                    "02-348-4547",
-                    "dongjae.kim@hansol.com",
-                    "(주)한솔로지스유",
-                    "카고링크 사업팀",
-                    "책임",
-                    "서울특별시 강서구 마곡중앙4로 22",
-                    "파인스퀘어 B동 7층",
-                    "07631",
-                    "1537462492",
-                    R.drawable.img_hansol_logo
-                )
+            nameCardList(vm = vm, searchText = searchText)
+        }
+    }
+
+    @comPreView(showBackground = true)
+    @Composable
+    fun CommunityScreen() {
+        var boardList: List<BoardItem> = listOf(
+            BoardItem(
+                boardId = 1,
+                title = "테스트 No1",
+                content = "테스트 입니다. 테스트 입니다테스트 입니다테스트 입니다테스트 입니다테스트 입니다테스트 입니다테스트 입니다",
+                caregory = "명함공유",
+                regId = "kimDongjae",
+                regDate = "2025-08-19 16:12:38",
+                view = 38,
+                like = 11,
+                replyCnt = 5
             )
-            nameCardList(listItems = sampleItems, searchText = searchText)
+        )
+        LazyColumn {
+            items(boardList) { board ->
+                boardCard(board)
+            }
         }
     }
 
     @Composable
-    fun CommunityScreen() {
-        Text("CommunityScreen 입니다.")
+    fun boardCard(boardItem: BoardItem) {
+        Row(
+            modifier = Modifier.padding(start = 20.dp, end = 20.dp)
+        ){
+            Column {
+                Text(
+                    text = boardItem.title
+                )
+                Text(
+                    text = boardItem.content
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text =  comm.DiffToNowDate(boardItem.regDate),
+                        color = Color.Gray,
+                        style = TextStyle(
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                    Row (
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        Icon(
+                            imageVector = Icons.Outlined.RemoveRedEye,
+                            contentDescription = "조회수",
+                            modifier = Modifier.size(14.dp),
+                            tint = Color.Gray
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 3.dp, end = 10.dp),
+                            text = boardItem.view.toString(),
+                            color = Color.Gray,
+                            style = TextStyle(
+                                fontSize = 11.sp,
+                            )
+                        )
+                        Icon(
+                            imageVector = Icons.Outlined.ThumbUp,
+                            contentDescription = "좋아요",
+                            modifier = Modifier.size(14.dp),
+                            tint = Color.Gray,
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 3.dp, end = 10.dp),
+                            text = boardItem.like.toString(),
+                            color = Color.Gray,
+                            style = TextStyle(
+                                fontSize = 11.sp,
+                            )
+                        )
+                        Icon(
+                            imageVector = Icons.Outlined.Chat,
+                            contentDescription = "댓글갯수",
+                            modifier = Modifier.size(14.dp),
+                            tint = Color.Gray
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 3.dp),
+                            text = boardItem.replyCnt.toString(),
+                            color = Color.Gray,
+                            style = TextStyle(
+                                fontSize = 11.sp,
+                            )
+                        )
+                    }
+                }
+            }
+        }
     }
 
+    @comPreView(showBackground = true)
     @Composable
     fun ProfileScreen() {
         Text("ProfileScreen 입니다.")
     }
 
+    @comPreView(showBackground = true)
     @Composable
     fun SettingsScreen() {
         Text("SettingsScreen 입니다.")
     }
 
+    @comPreView(showBackground = true)
     @kotlin.OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun nameCardList(listItems: List<Item>, searchText: String) {
+    fun nameCardList(vm: HomeViewModel, searchText: String) {
+        val listItems = vm.getItems()
+        Log.d("qwer123456","으잉뭐야 => " + listItems.size)
+
+        val filterList by remember(searchText, listItems) {
+            mutableStateOf(
+                if (searchText.isNotEmpty()) {
+                    listItems.filter {
+                        it.company.contains(searchText, true) ||
+                                it.name.contains(searchText, true)
+                    }
+                } else {
+                    listItems
+                }
+            )
+        }
+
         LazyColumn {
             stickyHeader {
                 Header()
-            }
-            var filterList = listItems
-            if(searchText.isNotEmpty()) {
-                filterList = filterList.filter {
-                    it.company.contains(searchText, ignoreCase = true) || it.name.contains(searchText, ignoreCase = true)
-                    //it.company.contains(searchText, ignoreCase = true) || it.name.contains(searchText, ignoreCase = true) || it.phoneNum.contains(searchText, ignoreCase = true) || it.comAddr.contains(searchText,ignoreCase = true)
-                }
             }
             items(filterList) { userNameCard ->
                 Card(
@@ -551,6 +691,7 @@ fun SearchableTopBar(
         }
     }
 
+    @comPreView(showBackground = true)
     @Composable
     fun bottomNavigationBar(navController: NavController) {
         val items = listOf(
@@ -613,6 +754,7 @@ fun SearchableTopBar(
        }
     }
 
+    @comPreView(showBackground = true)
     @Composable
     fun floatingActionButton() {
             Box(
@@ -633,8 +775,8 @@ fun SearchableTopBar(
             }
     }
 
+
     @OptIn(ExperimentalGetImage::class)
-    @comPreView
     @Composable
     fun faceDetectionScreen() {
         val cameraPermission = rememberPermissionState(Manifest.permission.CAMERA)
